@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { GridTileImage } from 'components/grid/tile';
@@ -6,10 +7,9 @@ import Footer from 'components/layout/footer';
 import { Gallery } from 'components/product/gallery';
 import { ProductProvider } from 'components/product/product-context';
 import { ProductDescription } from 'components/product/product-description';
-import { HIDDEN_PRODUCT_TAG } from 'lib/constants';
-import { getProduct, getProductRecommendations } from 'lib/shopify';
-import { Image } from 'lib/shopify/types';
-import Link from 'next/link';
+import { getProduct, getProductRecommendations } from 'lib/prodigy';
+import { HIDDEN_PRODUCT_TAG } from 'lib/prodigy/constants';
+import { Image } from 'lib/prodigy/types';
 import { Suspense } from 'react';
 
 export async function generateMetadata({
@@ -60,7 +60,7 @@ export default async function ProductPage({ params }: { params: { handle: string
     '@type': 'Product',
     name: product.title,
     description: product.description,
-    image: product.featuredImage.url,
+    image: product.featuredImage?.url,
     offers: {
       '@type': 'AggregateOffer',
       availability: product.availableForSale

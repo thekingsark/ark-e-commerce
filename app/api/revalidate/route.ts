@@ -1,6 +1,6 @@
-import { revalidate } from 'lib/shopify';
+import { revalidateAll } from 'lib/prodigy';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  return revalidate(req);
+  return revalidateAll(req);
 }

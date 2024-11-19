@@ -5,9 +5,16 @@ module.exports = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cdn.shopify.com',
-        pathname: '/s/files/**'
+        hostname: 'prodigy-commerce-production.*.s3.amazonaws.com',
+        pathname: '/store/**',
+        port: '',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        pathname: '/uploads/**'
       }
     ]
-  }
+  },
+  experimental: { instrumentationHook: true }
 };

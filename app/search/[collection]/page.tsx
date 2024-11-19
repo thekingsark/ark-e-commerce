@@ -1,10 +1,10 @@
-import { getCollection, getCollectionProducts } from 'lib/shopify';
+import { getCollection, getProducts } from 'lib/prodigy';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import Grid from 'components/grid';
 import ProductGridItems from 'components/layout/product-grid-items';
-import { defaultSort, sorting } from 'lib/constants';
+import { defaultSort, sorting } from 'lib/prodigy/constants';
 
 export async function generateMetadata({
   params
@@ -30,8 +30,8 @@ export default async function CategoryPage({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const { sort } = searchParams as { [key: string]: string };
-  const { sortKey, reverse } = sorting.find((item) => item.slug === sort) || defaultSort;
-  const products = await getCollectionProducts({ collection: params.collection, sortKey, reverse });
+  const { sortKey } = sorting.find((item) => item.slug === sort) || defaultSort;
+  const products = await getProducts({ collection: params.collection, sortKey });
 
   return (
     <section>
