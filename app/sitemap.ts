@@ -1,5 +1,5 @@
-import { getCollections, getPages, getProducts } from 'lib/shopify';
-import { validateEnvironmentVariables } from 'lib/utils';
+import { getCollections, getPages, getProducts } from 'lib/prodigy';
+import { validateEnvironmentVariables } from 'lib/prodigy/utils';
 import { MetadataRoute } from 'next';
 
 type Route = {
@@ -9,7 +9,7 @@ type Route = {
 
 const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
   ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : 'http://localhost:3000';
+  : 'http://localhost:3001';
 
 export const dynamic = 'force-dynamic';
 

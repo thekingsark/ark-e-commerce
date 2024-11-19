@@ -1,7 +1,7 @@
 'use server';
 
-import { TAGS } from 'lib/constants';
-import { addToCart, createCart, getCart, removeFromCart, updateCart } from 'lib/shopify';
+import { TAGS } from 'lib/prodigy/constants';
+import { addToCart, getCart, removeFromCart, updateCart } from 'lib/prodigy';
 import { revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -9,12 +9,16 @@ import { redirect } from 'next/navigation';
 export async function addItem(prevState: any, selectedVariantId: string | undefined) {
   let cartId = cookies().get('cartId')?.value;
 
-  if (!cartId || !selectedVariantId) {
+  if (!selectedVariantId) {
     return 'Error adding item to cart';
   }
 
   try {
-    await addToCart(cartId, [{ merchandiseId: selectedVariantId, quantity: 1 }]);
+    const cart = await addToCart(cartId, [{ variantId: selectedVariantId, quantity: 1 }]);
+    if (!cartId) {
+      cookies().set('cartId', cart.id!);
+    }
+
     revalidateTag(TAGS.cart);
   } catch (e) {
     return 'Error adding item to cart';
@@ -38,7 +42,7 @@ export async function removeItem(prevState: any, merchandiseId: string) {
     const lineItem = cart.lines.find((line) => line.merchandise.id === merchandiseId);
 
     if (lineItem && lineItem.id) {
-      await removeFromCart(cartId, [lineItem.id]);
+      await removeFromCart(cartId, lineItem.id);
       revalidateTag(TAGS.cart);
     } else {
       return 'Item not found in cart';
@@ -74,19 +78,17 @@ export async function updateItemQuantity(
 
     if (lineItem && lineItem.id) {
       if (quantity === 0) {
-        await removeFromCart(cartId, [lineItem.id]);
+        await removeFromCart(cartId, lineItem.id);
       } else {
-        await updateCart(cartId, [
-          {
-            id: lineItem.id,
-            merchandiseId,
-            quantity
-          }
-        ]);
+        await updateCart(cartId, {
+          id: lineItem.id,
+          variantId: merchandiseId,
+          quantity
+        });
       }
     } else if (quantity > 0) {
       // If the item doesn't exist in the cart and quantity > 0, add it
-      await addToCart(cartId, [{ merchandiseId, quantity }]);
+      await addToCart(cartId, [{ variantId: merchandiseId, quantity }]);
     }
 
     revalidateTag(TAGS.cart);
@@ -112,7 +114,8 @@ export async function redirectToCheckout() {
   redirect(cart.checkoutUrl);
 }
 
-export async function createCartAndSetCookie() {
-  let cart = await createCart();
-  cookies().set('cartId', cart.id!);
-}
+// Prodigy API doesn't support creation of empty cart
+// export async function createCartAndSetCookie() {
+//   let cart = await createCart();
+//   cookies().set('cartId', cart.id!);
+// }
