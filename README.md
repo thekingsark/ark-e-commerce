@@ -2,7 +2,7 @@
 
 # Next.js Commerce for Prodigy Commerce
 
-A high-perfomance, server-rendered Next.js App Router ecommerce application template to use with Prodigy Commerce.
+A high-performance, server-rendered Next.js App Router ecommerce application template to use with Prodigy Commerce.
 
 This template uses React Server Components, Server Actions, `Suspense`, `useOptimistic`, and more.
 

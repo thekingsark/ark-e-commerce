@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export async function addItem(prevState: any, selectedVariantId: string | undefined) {
-  let cartId = cookies().get('cartId')?.value;
+  let cartId = (await cookies()).get('cartId')?.value;
 
   if (!selectedVariantId) {
     return 'Error adding item to cart';
@@ -17,9 +17,9 @@ export async function addItem(prevState: any, selectedVariantId: string | undefi
   try {
     const cart = await addToCart(cartId, [{ variantId: selectedVariantId, quantity: 1 }]);
     if (!cart) {
-      cookies().delete('cartId');
+      (await cookies()).delete('cartId');
     } else if (!cartId) {
-      cookies().set('cartId', cart.id!);
+      (await cookies()).set('cartId', cart.id!);
     }
 
     revalidateTag(TAGS.cart);
@@ -29,7 +29,7 @@ export async function addItem(prevState: any, selectedVariantId: string | undefi
 }
 
 export async function removeItem(prevState: any, merchandiseId: string) {
-  let cartId = cookies().get('cartId')?.value;
+  let cartId = (await cookies()).get('cartId')?.value;
 
   if (!cartId) {
     return 'Missing cart ID';
@@ -62,7 +62,7 @@ export async function updateItemQuantity(
     quantity: number;
   }
 ) {
-  let cartId = cookies().get('cartId')?.value;
+  let cartId = (await cookies()).get('cartId')?.value;
 
   if (!cartId) {
     return 'Missing cart ID';
@@ -102,7 +102,7 @@ export async function updateItemQuantity(
 }
 
 export async function redirectToCheckout() {
-  let cartId = cookies().get('cartId')?.value;
+  let cartId = (await cookies()).get('cartId')?.value;
 
   if (!cartId) {
     return 'Missing cart ID';
@@ -120,13 +120,13 @@ export async function redirectToCheckout() {
 // Prodigy API doesn't support creation of empty cart
 // export async function createCartAndSetCookie() {
 //   let cart = await createCart();
-//   cookies().set('cartId', cart.id!);
+//   (await cookies()).set('cartId', cart.id!);
 // }
 
 async function removeItemOrCart(cartId: string, itemId: string, cartSize: number) {
   if (cartSize < 2) {
     await deleteCart(cartId);
-    cookies().delete('cartId');
+    (await cookies()).delete('cartId');
   } else {
     await removeFromCart(cartId, itemId);
   }
